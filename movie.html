@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            margin: 0px;
+            padding: 0px;
+        }
+        #search{
+            background-color: teal;
+            padding: 5px ;
+        }
+        #search>input{
+            display: block;
+            margin: auto;
+            padding: 10px 60px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            border-radius: 10px;
+        }
+        #search button{
+            display: block;
+            margin: auto;
+            padding: 5px 20px;
+            color:white;
+            background-color: black;
+            margin-top: 5px;
+            border-radius: 10px;
+        }
+
+        #search button:hover{
+            color: black;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        #container
+        {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            grid-template-rows: auto;
+            gap: 30px;
+            width: 80%;
+            /* background-color: lightskyblue; */
+            margin: auto;
+            margin-top: 20px;
+        }
+        #container>div{
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #container>div>img{
+            width: 100%;
+        }
+
+        #container div:hover{
+            cursor: pointer;
+            background-color: aliceblue;
+        }
+
+        #showError
+        {
+            margin: 50px 50px;
+        }
+            
+    </style>
+</head>
+<body>
+    <div id="search">
+        <input type="text" id="movieSearch" placeholder="Search Movie">
+        <button onclick="searchMovie()">Search</button>
+    </div>
+
+    <div id="container">
+        <!-- Append Movies here -->
+    </div>
+
+
+
+    
+</body>
+</html>
+
+
+<script>
+    
+    let api_Key = "55bb902d"
+    
+    let container = document.querySelector("#container")
+    
+    async function searchMovie()
+    {
+        
+        document.querySelector('#container').innerHTML=null
+        let  movie  = document.getElementById("movieSearch").value;
+        
+        
+        let url = `https://omdbapi.com/?s=${movie}&apikey=${api_Key}`
+        
+        try{
+            let res = await fetch(url)
+            
+            let data =await res.json()
+            console.log(data.Search)
+            append(data.Search)
+            
+        }
+        catch(err)
+        {
+            let div2= document.createElement("div")
+            div2.id='showError'
+            
+            
+            let errorimage = document.createElement("img")
+            errorimage.src="https://i.giphy.com/media/l3nWhI38IWDofyDrW/200w.webp"
+            
+            let h2=document.createElement("h2")
+            h2.innerText="No Movie Found"
+            div2.append(errorimage,h2)
+            document.querySelector("#container").append(div2)
+        }
+        
+        
+    }
+    
+    
+    
+    function append(data)
+    {
+        
+        data.forEach(function(elem)
+        {
+            let div = document.createElement("div")
+            
+            let img= document.createElement("img")
+            img.src=elem.Poster
+            
+            let h2tag = document.createElement("h3")
+            h2tag.innerText = "Name: "+ elem.Title
+            
+            
+            let ptag = document.createElement("p")
+            ptag.innerText= "Year: "+ elem.Year
+            
+            let type = document.createElement("p")
+            type.innerText= "Type: "+ elem.Type
+
+            let rating = document.createElement("p")
+            rating.innerText="Imdb Rating: "+ elem.imdbID
+
+            
+            div.append(img,h2tag, ptag,type,rating)
+            container.append(div)
+            
+        })
+    }
+</script>
